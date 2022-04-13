@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import ClassCounter from './components/ClassCounter';
 import Counter from './components/Counter';
 import PostFilter from './components/PostFilter';
@@ -6,10 +6,13 @@ import PostForm from './components/PostForm';
 import PostList from './components/PostList';
 import MyModal from './components/UI/MyModal/MyModal';
 import MyButton from './components/UI/button/MyButton';
-import axios from 'axios';
+
 
 import './styles/App.css';
 import { usePosts } from './hooks/usePosts';
+import PostService from './API/PostService';
+import MyLoader from './components/UI/loader/MyLoader';
+import { useFetching } from './hooks/useFething';
 
 function App() {
   const [posts, setPosts] = useState([]);
@@ -17,24 +20,20 @@ function App() {
   const [filter, setFilter] = useState({ sort: '', query: '' });
   const [modal, setModal] = useState(false);
   const sortedAndSearchedPosts = usePosts(posts, filter.sort, filter.query)
+  const [fetchPosts, isPostsLoading, postError] = useFetching(async () => {
+    const posts = await PostService.getAll()
+    setPosts(posts)
+  })
+
   useEffect(() => {
-    first
-  
-    return () => {
-      second
-    }
-  }, [third])
-  
+    console.log("first")
+    fetchPosts()
+  }, [])
+
 
   const createPost = (newPost) => {
     setPosts([...posts, newPost])
     setModal(false)
-  }
-  
-  async function fetchPosts() {
-    const response = await axios.get('https://jsonplaceholder.typicode.com/posts')
-    console.log(response.data)
-    setPosts(response.data)
   }
 
   //Получаем пост из дочернего компонента
@@ -45,7 +44,7 @@ function App() {
   return (
     <div className='App'>
       <button onClick={fetchPosts}>Get Posts</button>
-      <MyButton style={{marginTop: 30}} onClick={() => setModal(true)}>
+      <MyButton style={{ marginTop: 30 }} onClick={() => setModal(true)}>
         Создать пользователя
       </MyButton>
       <MyModal visible={modal} setVisible={setModal}>
@@ -57,7 +56,14 @@ function App() {
         filter={filter}
         setFilter={setFilter}
       />
-      <PostList remove={removePost} posts={sortedAndSearchedPosts} title='Reacts' />
+      {postError &&
+        <h1>Произошла ошибка ${postError}</h1>
+      }
+      {isPostsLoading
+        ? <div style={{ display: 'flex', justifyContent: 'center', marginTop: '50px' }}><MyLoader /></div>
+        : <PostList remove={removePost} posts={sortedAndSearchedPosts} title='Reacts' />
+      }
+
     </div >
   );
 }
