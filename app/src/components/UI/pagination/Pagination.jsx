@@ -11,8 +11,6 @@ const Pagination = ({ totalPages, page, changePage }) => {
     return (
         <div className={cl.pageWrapper}>
             {pagesArray.map(p =>
-
-
                 <span
                     onClick={() => changePage(p)}
                     key={p}

@@ -8,7 +8,6 @@ export const usePagination = (totalPages) => {
         for (let i = 0; i < totalPages; i++) {
             result.push(i + 1)
         }
-        console.log('paginat')
         return result
     }, [totalPages])
     return getPagesArray
