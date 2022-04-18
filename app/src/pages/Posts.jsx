@@ -63,7 +63,7 @@ function Posts() {
         setFilter={setFilter}
       />
       {postError &&
-        <h1>Произошла ошибка ${postError}</h1>
+        <h1>Произошла ошибка {postError}</h1>
       }
       {isPostsLoading
         ? <div style={{ display: 'flex', justifyContent: 'center', marginTop: '50px' }}><MyLoader /></div>
